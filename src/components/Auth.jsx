@@ -89,12 +89,13 @@ export default function Auth() {
         setUserMessage(errorMsg, 'error')
       } else if (isSignUp) {
         setUserMessage(
-          'Account created successfully! Please check your email for a confirmation link before signing in.',
+          'Account created successfully! You can now sign in with your credentials.',
           'success'
         )
-        // Clear form after successful signup
+        // Clear form and switch to sign in mode after successful signup
         setEmail('')
         setPassword('')
+        setIsSignUp(false)
       } else {
         setUserMessage('Successfully signed in!', 'success')
       }
@@ -176,6 +177,19 @@ export default function Auth() {
           </button>
         </p>
 
+        {isSignUp && (
+          <div className="auth-help">
+            <p className="help-text">
+              <strong>Development Mode:</strong>
+            </p>
+            <ul className="help-list">
+              <li>Email confirmation is disabled for testing</li>
+              <li>You can sign in immediately after creating an account</li>
+              <li>No email verification required in development</li>
+            </ul>
+          </div>
+        )}
+
         {!isSignUp && (
           <div className="auth-help">
             <p className="help-text">
@@ -183,8 +197,8 @@ export default function Auth() {
             </p>
             <ul className="help-list">
               <li>Make sure your email and password are correct</li>
-              <li>Check if you've confirmed your email address</li>
               <li>Try refreshing the page and signing in again</li>
+              <li>Create a new account if you haven't signed up yet</li>
             </ul>
           </div>
         )}
