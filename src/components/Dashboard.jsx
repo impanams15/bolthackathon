@@ -5,6 +5,7 @@ import AsaMinter from './AsaMinter'
 import AIChat from './AIChat'
 import DonationManager from './DonationManager'
 import RedditIntegration from './RedditIntegration'
+import DonatePage from './DonatePage'
 import Footer from './Footer'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
@@ -82,6 +83,12 @@ export default function Dashboard() {
             Mint ASA
           </button>
           <button 
+            className={`tab-button ${activeTab === 'donate' ? 'active' : ''}`}
+            onClick={() => setActiveTab('donate')}
+          >
+            Donate
+          </button>
+          <button 
             className={`tab-button ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => setActiveTab('chat')}
           >
@@ -113,6 +120,10 @@ export default function Dashboard() {
           
           {activeTab === 'mint' && wallet && (
             <AsaMinter wallet={wallet} />
+          )}
+          
+          {activeTab === 'donate' && (
+            <DonatePage />
           )}
           
           {activeTab === 'chat' && (
