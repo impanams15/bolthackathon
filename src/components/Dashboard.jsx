@@ -47,7 +47,7 @@ export default function Dashboard() {
     <div className="dashboard-wrapper">
       <div className="dashboard">
         <div className="dashboard-header">
-          <h1>Algorand DApp Dashboard</h1>
+          <h1>UsheGuard Dashboard</h1>
           <button onClick={handleSignOut} className="sign-out-button">
             Sign Out
           </button>
@@ -104,7 +104,7 @@ export default function Dashboard() {
 
         <div className="dashboard-content">
           {activeTab === 'wallet' && (
-            <AlgorandWallet onWalletCreated={setWallet} />
+            <AlgorandWallet />
           )}
           
           {activeTab === 'transfer' && wallet && (
