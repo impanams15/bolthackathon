@@ -321,26 +321,15 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* Tavus Avatar Section */}
+        {/* AI Avatar Section */}
         {showAvatar && (
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 mb-6 p-6">
             <div className="text-center">
               <div className="relative inline-block mb-4">
-                {/* Working Tavus Video Iframe */}
-                <iframe
-                  src="https://tavus.video/afb1656d6c"
-                  width="320"
-                  height="320"
-                  allow="autoplay; microphone"
-                  style={{
-                    border: 'none',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                  }}
-                  className="mx-auto"
-                  title="Tavus AI Avatar"
-                />
+                {/* Circular AI Avatar Placeholder */}
+                <div className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                  <Bot className="text-gray-600" size={48} />
+                </div>
                 
                 {/* Speaking Indicator Overlay */}
                 {isPlaying && (
@@ -363,8 +352,11 @@ export default function Chat() {
               
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">AI Avatar</h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mb-2">
                   {isPlaying ? 'Currently speaking...' : 'Ready to assist you'}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Avatar loading...
                 </p>
               </div>
             </div>
