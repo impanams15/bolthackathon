@@ -325,39 +325,43 @@ export default function Chat() {
         {showAvatar && (
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 mb-6 p-6">
             <div className="text-center">
-              <div className="relative inline-block">
+              <div className="relative inline-block mb-4">
                 {/* Working Tavus Video Iframe */}
-                <div className="relative">
-                  <iframe
-                    src="https://tavus.video/afb1656d6c"
-                    width="320"
-                    height="320"
-                    allow="autoplay; microphone"
-                    className="rounded-xl shadow-xl border-0 overflow-hidden"
-                    title="Tavus AI Avatar"
-                  />
-                  
-                  {/* Speaking Indicator Overlay */}
-                  {isPlaying && (
-                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                      <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg animate-pulse">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                          <span>Speaking...</span>
-                          <AudioWaveform isActive={true} />
-                        </div>
+                <iframe
+                  src="https://tavus.video/afb1656d6c"
+                  width="320"
+                  height="320"
+                  allow="autoplay; microphone"
+                  style={{
+                    border: 'none',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                  }}
+                  className="mx-auto"
+                  title="Tavus AI Avatar"
+                />
+                
+                {/* Speaking Indicator Overlay */}
+                {isPlaying && (
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg animate-pulse">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                        <span>Speaking...</span>
+                        <AudioWaveform isActive={true} />
                       </div>
                     </div>
-                  )}
-                  
-                  {/* Avatar Status Indicator */}
-                  <div className="absolute top-2 right-2">
-                    <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
                   </div>
+                )}
+                
+                {/* Avatar Status Indicator */}
+                <div className="absolute top-2 right-2">
+                  <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
                 </div>
               </div>
               
-              <div className="mt-4">
+              <div>
                 <h3 className="text-lg font-semibold text-gray-900">AI Avatar</h3>
                 <p className="text-sm text-gray-600">
                   {isPlaying ? 'Currently speaking...' : 'Ready to assist you'}
