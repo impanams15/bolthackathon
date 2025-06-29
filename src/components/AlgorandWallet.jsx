@@ -45,6 +45,8 @@ export default function AlgorandWallet() {
     if (!wallet) return
 
     try {
+      console.log("📦 Wallet param being sent to Algorand SDK:", walletAddr);
+
       const info = await getAccountInfo(wallet.address)
       setAccountInfo(info)
     } catch (err) {
