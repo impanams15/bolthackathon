@@ -284,31 +284,34 @@ export default function Chat() {
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 mb-6 p-6">
             <div className="text-center">
               <div className="relative inline-block">
-                <video
-                  ref={tavusVideoRef}
-                  className="w-48 h-48 rounded-2xl object-cover shadow-lg border-4 border-white"
-                  width="192"
-                  height="192"
-                  muted
-                  playsInline
-                  poster="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=400"
-                />
-                
-                {/* Speaking Indicator */}
-                {isPlaying && (
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg animate-pulse">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                        <span>Speaking...</span>
+                {/* Tavus Video Iframe */}
+                <div className="relative">
+                  <iframe
+                    src="https://platform.tavus.io/videos/afb1656d6c"
+                    width="350"
+                    height="320"
+                    allow="autoplay; microphone"
+                    className="rounded-2xl shadow-lg border-4 border-white overflow-hidden"
+                    style={{ border: 'none' }}
+                    title="Tavus AI Avatar"
+                  />
+                  
+                  {/* Speaking Indicator Overlay */}
+                  {isPlaying && (
+                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                      <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg animate-pulse">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                          <span>Speaking...</span>
+                        </div>
                       </div>
                     </div>
+                  )}
+                  
+                  {/* Avatar Status Indicator */}
+                  <div className="absolute top-2 right-2">
+                    <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
                   </div>
-                )}
-                
-                {/* Avatar Status */}
-                <div className="absolute top-2 right-2">
-                  <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
                 </div>
               </div>
               
