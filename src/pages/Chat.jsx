@@ -262,6 +262,29 @@ export default function Chat() {
     setShowAvatar(!showAvatar)
   }
 
+  // Audio Waveform Component
+  const AudioWaveform = ({ isActive }) => {
+    return (
+      <div className="flex items-center space-x-1 ml-3">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className={`w-1 bg-gradient-to-t from-blue-400 to-blue-600 rounded-full transition-all duration-300 ${
+              isActive 
+                ? 'animate-pulse shadow-lg shadow-blue-400/50' 
+                : 'opacity-30'
+            }`}
+            style={{
+              height: isActive ? `${12 + (i % 3) * 8}px` : '8px',
+              animationDelay: `${i * 0.1}s`,
+              animationDuration: '0.8s'
+            }}
+          />
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
@@ -276,6 +299,9 @@ export default function Chat() {
                 <h1 className="text-2xl font-bold text-gray-900">AI Assistant</h1>
                 <p className="text-gray-600">Your intelligent blockchain companion</p>
               </div>
+              
+              {/* Header Audio Waveform */}
+              <AudioWaveform isActive={isPlaying} />
             </div>
             
             <div className="flex items-center space-x-2">
@@ -344,6 +370,7 @@ export default function Chat() {
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
                           <span>Speaking...</span>
+                          <AudioWaveform isActive={true} />
                         </div>
                       </div>
                     </div>
@@ -406,18 +433,23 @@ export default function Chat() {
                     {/* Audio Controls for AI Messages */}
                     {message.type === 'ai' && (
                       <div className="flex flex-col space-y-2">
-                        {/* Speaker Icon */}
-                        <button
-                          onClick={() => playMessageAudio(message)}
-                          className={`self-start p-1 rounded-lg transition-all duration-200 cursor-pointer ${
-                            playingMessageId === message.id
-                              ? 'text-blue-500 bg-blue-50 hover:bg-blue-100'
-                              : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
-                          }`}
-                          title={playingMessageId === message.id ? 'Stop audio' : 'Play audio'}
-                        >
-                          <Volume2 size={24} />
-                        </button>
+                        {/* Speaker Icon with Waveform */}
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => playMessageAudio(message)}
+                            className={`p-1 rounded-lg transition-all duration-200 cursor-pointer ${
+                              playingMessageId === message.id
+                                ? 'text-blue-500 bg-blue-50 hover:bg-blue-100'
+                                : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                            }`}
+                            title={playingMessageId === message.id ? 'Stop audio' : 'Play audio'}
+                          >
+                            <Volume2 size={24} />
+                          </button>
+                          
+                          {/* Message-specific Waveform */}
+                          <AudioWaveform isActive={playingMessageId === message.id} />
+                        </div>
                         
                         {/* Compact Audio Player */}
                         <audio
@@ -444,10 +476,13 @@ export default function Chat() {
                     <Bot size={16} />
                   </div>
                   <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 shadow-md border border-gray-100">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                      <AudioWaveform isActive={true} />
                     </div>
                   </div>
                 </div>
@@ -501,6 +536,12 @@ export default function Chat() {
               </div>
               <div className="flex items-center space-x-2">
                 <span>{messages.length} messages</span>
+                {isPlaying && (
+                  <div className="flex items-center space-x-2 text-blue-600">
+                    <span>🔊 Playing</span>
+                    <AudioWaveform isActive={true} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
