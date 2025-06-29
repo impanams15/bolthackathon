@@ -86,7 +86,7 @@ export default function VoiceChat() {
         <div className="voice-chat-icon">
           <Volume2 size={48} style={{ color: '#667eea' }} />
         </div>
-        <h2>Voice Chat with AuraGuard</h2>
+        <h2>Voice Chat with UsheGuard</h2>
         <p>Enter text and hear it spoken by our AI voice assistant</p>
       </div>
 
@@ -98,7 +98,7 @@ export default function VoiceChat() {
               id="text-input"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Type your message here and AuraGuard will speak it aloud..."
+              placeholder="Type your message here and UsheGuard will speak it aloud..."
               rows={4}
               required
               disabled={loading}
@@ -122,7 +122,7 @@ export default function VoiceChat() {
             ) : (
               <>
                 <Mic size={20} />
-                🎙️ Ask AuraGuard
+                🎙️ Ask UsheGuard
               </>
             )}
           </button>

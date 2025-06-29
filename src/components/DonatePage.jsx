@@ -187,7 +187,7 @@ export default function DonatePage() {
               <div className="certificate-details">
                 <div className="detail-item">
                   <strong>Certificate Name:</strong>
-                  <span>AuraGuard Certificate (AGC)</span>
+                  <span>UsheGuard Certificate (UGC)</span>
                 </div>
                 <div className="detail-item">
                   <strong>ASA ID:</strong>

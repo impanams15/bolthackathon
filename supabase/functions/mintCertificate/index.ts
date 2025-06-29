@@ -60,8 +60,8 @@ serve(async (req) => {
     const metadata = JSON.stringify({
       user_id: userId,
       donation_amount: donationAmount,
-      certificate_type: "AuraGuard Donation Certificate",
-      issued_by: "AuraGuard Platform",
+      certificate_type: "UsheGuard Donation Certificate",
+      issued_by: "UsheGuard Platform",
       issue_date: new Date().toISOString(),
       description: `Certificate of donation for ${donationAmount} ALGO to charity`
     })
@@ -71,9 +71,9 @@ serve(async (req) => {
       from: projectAccount.addr,
       total: 1, // Unique certificate - only 1 exists
       decimals: 0, // No fractional units
-      assetName: "AuraGuard Certificate",
-      unitName: "AGC",
-      assetURL: `https://auraguard.app/certificate/${userId}`, // URL to certificate details
+      assetName: "UsheGuard Certificate",
+      unitName: "UGC",
+      assetURL: `https://usheguard.app/certificate/${userId}`, // URL to certificate details
       assetMetadataHash: new Uint8Array(Buffer.from(metadata).slice(0, 32)), // First 32 bytes of metadata
       defaultFrozen: false,
       freeze: projectAccount.addr, // Project can freeze if needed
@@ -129,8 +129,8 @@ serve(async (req) => {
       success: true,
       asaId: assetId,
       txHash: txId,
-      assetName: "AuraGuard Certificate",
-      unitName: "AGC",
+      assetName: "UsheGuard Certificate",
+      unitName: "UGC",
       metadata: metadata,
       message: 'Certificate minted successfully! Your unique donation certificate has been created on the Algorand blockchain.'
     }), {
