@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 import { Heart, CheckCircle, AlertCircle, Home, Award, ExternalLink } from 'lucide-react'
 
 export default function DonatePage() {
@@ -15,7 +16,7 @@ export default function DonatePage() {
 
   const handleDonate = async (e) => {
     e.preventDefault()
-    
+
     if (!amount || parseFloat(amount) <= 0) {
       setError('Please enter a valid donation amount')
       return
@@ -31,6 +32,16 @@ export default function DonatePage() {
     setResult(null)
 
     try {
+      const { data: wallet, error: walletError } = await supabase
+        .from('algorand_wallets')
+        .select('address, mnemonic')
+        .eq('user_id', user.id)
+        .single()
+
+      if (walletError || !wallet) {
+        throw new Error('Wallet not found for user. Please set up your wallet first.')
+      }
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sendDonation`, {
         method: 'POST',
         headers: {
@@ -39,7 +50,9 @@ export default function DonatePage() {
         },
         body: JSON.stringify({
           amount: parseFloat(amount),
-          userId: user.id
+          userId: user.id,
+          walletAddr: wallet.address,
+          mnemonic: wallet.mnemonic,
         })
       })
 
@@ -140,7 +153,6 @@ export default function DonatePage() {
             <p>{result.message}</p>
           </div>
 
-          {/* Certificate Section */}
           {!certificateResult && (
             <div className="certificate-section">
               <div className="certificate-info">
@@ -148,9 +160,9 @@ export default function DonatePage() {
                 <h3>Get Your Donation Certificate</h3>
                 <p>Mint a unique blockchain certificate to commemorate your donation!</p>
               </div>
-              
-              <button 
-                onClick={handleMintCertificate} 
+
+              <button
+                onClick={handleMintCertificate}
                 disabled={certificateLoading}
                 className="mint-certificate-button"
               >
@@ -175,7 +187,6 @@ export default function DonatePage() {
             </div>
           )}
 
-          {/* Certificate Success */}
           {certificateResult && (
             <div className="certificate-success">
               <div className="certificate-success-header">
@@ -200,7 +211,7 @@ export default function DonatePage() {
               </div>
 
               <div className="certificate-actions">
-                <a 
+                <a
                   href={getAlgoExplorerUrl(certificateResult.asaId)}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -258,9 +269,9 @@ export default function DonatePage() {
             <small className="input-help">Minimum donation: 0.001 ALGO</small>
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading || !amount} 
+          <button
+            type="submit"
+            disabled={loading || !amount}
             className="donate-button"
           >
             {loading ? (
