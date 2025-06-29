@@ -14,7 +14,7 @@
     "react-dom": "^19.1.0",
     "@supabase/supabase-js": "^2.39.0",
     "algosdk": "^3.1.0",
-    "lucide-react": "^0.263.1"
+    "lucide-react": "^0.468.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
