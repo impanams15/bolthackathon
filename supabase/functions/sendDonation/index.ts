@@ -8,12 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-// Project-owned testnet wallet (for demo purposes)
-const PROJECT_WALLET_MNEMONIC = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon'
-
-// Fixed charity wallet address (testnet)
-const CHARITY_WALLET_ADDRESS = 'CHARITYWALLETADDRESSFORTESTNETDONATIONSEXAMPLE123456789'
-
 serve(async (req) => {
   try {
     if (req.method === 'OPTIONS') {
@@ -36,17 +30,29 @@ serve(async (req) => {
       })
     }
 
+    // Get environment variables
+    const SENDER_MNEMONIC = Deno.env.get('SENDER_MNEMONIC')
+    const CHARITY_ADDRESS = Deno.env.get('CHARITY_ADDRESS')
+    const ALGOD_API = Deno.env.get('ALGOD_API') || 'https://testnet-api.algonode.cloud'
+
+    if (!SENDER_MNEMONIC || !CHARITY_ADDRESS) {
+      return new Response(JSON.stringify({ error: 'Server configuration error: Missing wallet credentials' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Initialize Algorand client (testnet)
-    const algodClient = new algosdk.Algodv2('', 'https://testnet-api.algonode.cloud', '')
+    // Initialize Algorand client
+    const algodClient = new algosdk.Algodv2('', ALGOD_API, '')
 
     // Get project account from mnemonic
-    const projectAccount = algosdk.mnemonicToSecretKey(PROJECT_WALLET_MNEMONIC)
+    const projectAccount = algosdk.mnemonicToSecretKey(SENDER_MNEMONIC)
 
     // Convert ALGO to microAlgos
     const amountInMicroAlgos = Math.round(amount * 1000000)
@@ -57,7 +63,7 @@ serve(async (req) => {
     // Create payment transaction from project wallet to charity wallet
     const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: projectAccount.addr,
-      to: CHARITY_WALLET_ADDRESS,
+      to: CHARITY_ADDRESS,
       amount: amountInMicroAlgos,
       note: new Uint8Array(Buffer.from(`Donation from user: ${userId}`)),
       suggestedParams,
@@ -72,9 +78,9 @@ serve(async (req) => {
     // Wait for confirmation
     await algosdk.waitForConfirmation(algodClient, txId, 4)
 
-    // Save donation record to Supabase
+    // Save donation record to Supabase (using the new user_donations table)
     const { error: dbError } = await supabaseClient
-      .from('donations')
+      .from('user_donations')
       .insert({
         user_id: userId,
         amount: amount,
