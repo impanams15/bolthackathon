@@ -1,32 +1,28 @@
-import { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
+import React, { useState } from 'react'
+import { supabase } from '../utils/supabaseClient'
 
 export default function Auth() {
-  const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-
-  const { signUp, signIn } = useAuth()
+  const [isSignUp, setIsSignUp] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
 
     try {
-      const { data, error } = isSignUp 
-        ? await signUp(email, password)
-        : await signIn(email, password)
-
-      if (error) {
-        setMessage(error.message)
-      } else if (isSignUp) {
-        setMessage('Check your email for the confirmation link!')
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password })
+        if (error) throw error
+        alert('Sign-up successful! Check your email to confirm.')
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) throw error
+        alert('Logged in successfully!')
       }
     } catch (error) {
-      setMessage('An unexpected error occurred')
+      alert(error.message)
     } finally {
       setLoading(false)
     }
@@ -36,7 +32,7 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-8">
-          {/* Logo */}
+          {/* Logo & Heading */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <span className="text-white font-bold text-2xl">U</span>
@@ -48,10 +44,11 @@ export default function Auth() {
               {isSignUp ? 'Join the future of blockchain' : 'Sign in to your account'}
             </p>
           </div>
-          
+
+          {/* Auth Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email Address
               </label>
               <input
@@ -61,13 +58,14 @@ export default function Auth() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your email"
+                autoComplete="email"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <input
@@ -77,53 +75,33 @@ export default function Auth() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                minLength={6}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your password"
+                autoComplete="current-password"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
-            
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold rounded-xl hover:from-primary-600 hover:to-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+              className="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Loading...
-                </>
-              ) : (
-                isSignUp ? 'Create Account' : 'Sign In'
-              )}
+              {loading ? 'Processing...' : isSignUp ? 'Sign Up' : 'Sign In'}
             </button>
           </form>
-          
-          {message && (
-            <div className={`mt-4 p-3 rounded-xl text-sm ${
-              message.includes('error') || message.includes('Invalid') 
-                ? 'bg-red-50 text-red-700 border border-red-200' 
-                : 'bg-green-50 text-green-700 border border-green-200'
-            }`}>
-              {message}
-            </div>
-          )}
-          
+
+          {/* Toggle Link */}
           <div className="mt-6 text-center">
-            <span className="text-gray-600">
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp)
-                setMessage('')
-              }}
-              className="text-primary-600 hover:text-primary-700 font-semibold transition-colors duration-200"
-              disabled={loading}
-            >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </button>
+            <p className="text-sm text-gray-600">
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-primary-600 hover:underline ml-1"
+              >
+                {isSignUp ? 'Sign In' : 'Sign Up'}
+              </button>
+            </p>
           </div>
         </div>
       </div>

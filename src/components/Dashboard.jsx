@@ -5,6 +5,9 @@ import AsaMinter from './AsaMinter'
 import AIChat from './AIChat'
 import DonationManager from './DonationManager'
 import RedditIntegration from './RedditIntegration'
+import DonatePage from './DonatePage'
+import VoiceChat from './VoiceChat'
+import UsheGuardAI from './UsheGuardAI'
 import Footer from './Footer'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
@@ -82,10 +85,28 @@ export default function Dashboard() {
             Mint ASA
           </button>
           <button 
+            className={`tab-button ${activeTab === 'donate' ? 'active' : ''}`}
+            onClick={() => setActiveTab('donate')}
+          >
+            Donate
+          </button>
+          <button 
             className={`tab-button ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => setActiveTab('chat')}
           >
             AI Chat
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'voicechat' ? 'active' : ''}`}
+            onClick={() => setActiveTab('voicechat')}
+          >
+            Voice Chat
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'usheguardai' ? 'active' : ''}`}
+            onClick={() => setActiveTab('usheguardai')}
+          >
+            UsheGuardAI
           </button>
           <button 
             className={`tab-button ${activeTab === 'donations' ? 'active' : ''}`}
@@ -115,8 +136,20 @@ export default function Dashboard() {
             <AsaMinter wallet={wallet} />
           )}
           
+          {activeTab === 'donate' && (
+            <DonatePage />
+          )}
+          
           {activeTab === 'chat' && (
             <AIChat />
+          )}
+          
+          {activeTab === 'voicechat' && (
+            <VoiceChat />
+          )}
+          
+          {activeTab === 'usheguardai' && (
+            <UsheGuardAI />
           )}
           
           {activeTab === 'donations' && wallet && (
