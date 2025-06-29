@@ -22,7 +22,7 @@ export default function Home() {
           {/* Main Heading with Animation */}
           <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 animate-slide-up">
             <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent animate-gradient">
-              Usheguard
+              UsheGuard
             </span>
           </h1>
           
