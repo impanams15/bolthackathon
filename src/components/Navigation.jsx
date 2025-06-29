@@ -49,9 +49,9 @@ export default function Navigation() {
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center space-x-2" onClick={closeMenu}>
                 <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-sm">A</span>
+                  <span className="text-white font-bold text-sm">U</span>
                 </div>
-                <span className="font-bold text-xl text-gray-900 hidden sm:block">AlgoDApp</span>
+                <span className="font-bold text-xl text-gray-900 hidden sm:block">Usheguard</span>
               </Link>
             </div>
 
