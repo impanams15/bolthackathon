@@ -6,6 +6,7 @@ import AIChat from './AIChat'
 import DonationManager from './DonationManager'
 import RedditIntegration from './RedditIntegration'
 import DonatePage from './DonatePage'
+import VoiceChat from './VoiceChat'
 import Footer from './Footer'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
@@ -95,6 +96,12 @@ export default function Dashboard() {
             AI Chat
           </button>
           <button 
+            className={`tab-button ${activeTab === 'voicechat' ? 'active' : ''}`}
+            onClick={() => setActiveTab('voicechat')}
+          >
+            Voice Chat
+          </button>
+          <button 
             className={`tab-button ${activeTab === 'donations' ? 'active' : ''}`}
             onClick={() => setActiveTab('donations')}
             disabled={!wallet}
@@ -128,6 +135,10 @@ export default function Dashboard() {
           
           {activeTab === 'chat' && (
             <AIChat />
+          )}
+          
+          {activeTab === 'voicechat' && (
+            <VoiceChat />
           )}
           
           {activeTab === 'donations' && wallet && (
