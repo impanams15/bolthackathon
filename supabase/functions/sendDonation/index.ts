@@ -30,6 +30,13 @@ serve(async (req) => {
       })
     }
 
+    if (amount < 0.001) {
+      return new Response(JSON.stringify({ error: 'Minimum donation amount is 0.001 ALGO' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     // Get environment variables
     const SENDER_MNEMONIC = Deno.env.get('SENDER_MNEMONIC')
     const CHARITY_ADDRESS = Deno.env.get('CHARITY_ADDRESS')
@@ -76,9 +83,12 @@ serve(async (req) => {
     const { txId } = await algodClient.sendRawTransaction(signedTxn).do()
 
     // Wait for confirmation
-    await algosdk.waitForConfirmation(algodClient, txId, 4)
+    const confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4)
 
-    // Save donation record to Supabase (using the new user_donations table)
+    // Get the confirmed round for additional verification
+    const confirmedRound = confirmedTxn['confirmed-round']
+
+    // Save donation record to Supabase
     const { error: dbError } = await supabaseClient
       .from('user_donations')
       .insert({
@@ -95,8 +105,9 @@ serve(async (req) => {
         success: true,
         txHash: txId,
         amount: amount,
-        message: 'Donation successful! Transaction recorded on blockchain.',
-        warning: 'Database recording failed but donation was processed.'
+        confirmedRound: confirmedRound,
+        message: 'Thank you for your generous donation! Your contribution has been successfully sent to the charity wallet.',
+        warning: 'Database recording failed but donation was processed successfully.'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -106,7 +117,8 @@ serve(async (req) => {
       success: true,
       txHash: txId,
       amount: amount,
-      message: 'Thank you for your generous donation! Your contribution has been successfully sent to the charity wallet.'
+      confirmedRound: confirmedRound,
+      message: 'Thank you for your generous donation! Your contribution has been successfully sent to the charity wallet and recorded in our database.'
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
@@ -133,8 +145,17 @@ serve(async (req) => {
       })
     }
 
+    if (error.message.includes('account does not exist')) {
+      return new Response(JSON.stringify({ 
+        error: 'Project wallet account not found. Please contact support.' 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     return new Response(JSON.stringify({ 
-      error: error.message || 'Donation processing failed' 
+      error: error.message || 'Donation processing failed. Please try again.' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

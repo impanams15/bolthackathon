@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { Heart, CheckCircle, AlertCircle } from 'lucide-react'
+import { Heart, CheckCircle, AlertCircle, Home } from 'lucide-react'
 
 export default function DonatePage() {
   const { user } = useAuth()
@@ -8,12 +8,18 @@ export default function DonatePage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const handleDonate = async (e) => {
     e.preventDefault()
     
     if (!amount || parseFloat(amount) <= 0) {
       setError('Please enter a valid donation amount')
+      return
+    }
+
+    if (parseFloat(amount) < 0.001) {
+      setError('Minimum donation amount is 0.001 ALGO')
       return
     }
 
@@ -42,11 +48,59 @@ export default function DonatePage() {
 
       setResult(data)
       setAmount('')
+      setShowSuccess(true)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleBackToHome = () => {
+    setShowSuccess(false)
+    setResult(null)
+    setError('')
+  }
+
+  if (showSuccess && result) {
+    return (
+      <div className="donate-page">
+        <div className="success-page">
+          <div className="success-header">
+            <div className="success-icon">
+              <CheckCircle size={64} className="success-check" />
+            </div>
+            <h2>Thank you for donating!</h2>
+            <p>Your generous contribution has been successfully processed</p>
+          </div>
+
+          <div className="success-details">
+            <h3>Transaction Details</h3>
+            <div className="detail-item">
+              <strong>Amount Donated:</strong>
+              <span>{result.amount} ALGO</span>
+            </div>
+            <div className="detail-item">
+              <strong>Transaction Hash:</strong>
+              <code className="tx-hash">{result.txHash}</code>
+            </div>
+            <div className="detail-item">
+              <strong>Status:</strong>
+              <span className="status-confirmed">✅ Confirmed on Blockchain</span>
+            </div>
+          </div>
+
+          <div className="success-message-box">
+            <p>{result.message}</p>
+          </div>
+
+          <button onClick={handleBackToHome} className="back-home-button">
+            <Home size={20} />
+            Back to Home
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -99,21 +153,6 @@ export default function DonatePage() {
             )}
           </button>
         </form>
-
-        {result && (
-          <div className="success-result">
-            <div className="success-icon">
-              <CheckCircle size={24} />
-            </div>
-            <h3>Donation Successful!</h3>
-            <div className="result-details">
-              <p><strong>Amount:</strong> {result.amount} ALGO</p>
-              <p><strong>Transaction Hash:</strong></p>
-              <code className="tx-hash">{result.txHash}</code>
-              <p className="success-message">{result.message}</p>
-            </div>
-          </div>
-        )}
 
         {error && (
           <div className="error-result">
