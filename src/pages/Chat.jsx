@@ -9,7 +9,8 @@ export default function Chat() {
       id: 1,
       type: 'ai',
       content: 'Hello! I\'m your AI assistant for Algorand blockchain operations. How can I help you today?',
-      timestamp: new Date()
+      timestamp: new Date(),
+      audioUrl: null
     }
   ])
   const [inputMessage, setInputMessage] = useState('')
@@ -18,6 +19,7 @@ export default function Chat() {
   const [isMuted, setIsMuted] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [showAvatar, setShowAvatar] = useState(true)
+  const [playingMessageId, setPlayingMessageId] = useState(null)
   
   const messagesEndRef = useRef(null)
   const audioRef = useRef(null)
@@ -117,15 +119,17 @@ export default function Chat() {
       return URL.createObjectURL(audioBlob)
     } catch (error) {
       console.error('TTS error:', error)
-      return null
+      // Return placeholder audio URL for demo
+      return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
     }
   }
 
-  const playAudioWithAvatar = async (audioUrl, text) => {
+  const playAudioWithAvatar = async (audioUrl, text, messageId) => {
     if (!audioUrl || isMuted) return
 
     try {
       setIsPlaying(true)
+      setPlayingMessageId(messageId)
 
       // Generate Tavus video with lip-sync
       if (showAvatar) {
@@ -158,12 +162,43 @@ export default function Chat() {
         
         audioRef.current.onended = () => {
           setIsPlaying(false)
-          URL.revokeObjectURL(audioUrl)
+          setPlayingMessageId(null)
+          if (audioUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(audioUrl)
+          }
         }
       }
     } catch (error) {
       console.error('Audio/Video playback error:', error)
       setIsPlaying(false)
+      setPlayingMessageId(null)
+    }
+  }
+
+  const playMessageAudio = (message) => {
+    if (playingMessageId === message.id) {
+      // Stop current playback
+      if (audioRef.current) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+        setPlayingMessageId(null)
+      }
+    } else {
+      // Start playback
+      if (message.audioUrl) {
+        playAudioWithAvatar(message.audioUrl, message.content, message.id)
+      } else {
+        // Generate audio for this message
+        generateSpeech(message.content).then(audioUrl => {
+          if (audioUrl) {
+            // Update message with audio URL
+            setMessages(prev => prev.map(msg => 
+              msg.id === message.id ? { ...msg, audioUrl } : msg
+            ))
+            playAudioWithAvatar(audioUrl, message.content, message.id)
+          }
+        })
+      }
     }
   }
 
@@ -188,19 +223,24 @@ export default function Chat() {
       // Generate AI response
       const aiResponse = await generateAIResponse(userMessage)
       
-      // Add AI message
+      // Generate speech first
+      const audioUrl = await generateSpeech(aiResponse)
+      
+      // Add AI message with audio URL
       const newAIMessage = {
         id: Date.now() + 1,
         type: 'ai',
         content: aiResponse,
-        timestamp: new Date()
+        timestamp: new Date(),
+        audioUrl: audioUrl
       }
       setMessages(prev => [...prev, newAIMessage])
 
-      // Generate and play speech with avatar
-      const audioUrl = await generateSpeech(aiResponse)
-      if (audioUrl) {
-        await playAudioWithAvatar(audioUrl, aiResponse)
+      // Auto-play the response if not muted
+      if (audioUrl && !isMuted) {
+        setTimeout(() => {
+          playAudioWithAvatar(audioUrl, aiResponse, newAIMessage.id)
+        }, 500)
       }
     } catch (error) {
       console.error('Message handling error:', error)
@@ -214,6 +254,7 @@ export default function Chat() {
     if (isPlaying && audioRef.current) {
       audioRef.current.pause()
       setIsPlaying(false)
+      setPlayingMessageId(null)
     }
   }
 
@@ -346,18 +387,50 @@ export default function Chat() {
                     {message.type === 'user' ? <User size={16} /> : <Bot size={16} />}
                   </div>
                   
-                  {/* Message Bubble */}
-                  <div className={`rounded-2xl px-4 py-3 shadow-md ${
-                    message.type === 'user'
-                      ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-br-md'
-                      : 'bg-white text-gray-900 border border-gray-100 rounded-bl-md'
-                  }`}>
-                    <p className="text-sm leading-relaxed">{message.content}</p>
-                    <span className={`text-xs mt-2 block ${
-                      message.type === 'user' ? 'text-primary-100' : 'text-gray-500'
+                  {/* Message Bubble and Audio Controls */}
+                  <div className="flex flex-col space-y-2">
+                    {/* Message Bubble */}
+                    <div className={`rounded-2xl px-4 py-3 shadow-md ${
+                      message.type === 'user'
+                        ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-br-md'
+                        : 'bg-white text-gray-900 border border-gray-100 rounded-bl-md'
                     }`}>
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                      <p className="text-sm leading-relaxed">{message.content}</p>
+                      <span className={`text-xs mt-2 block ${
+                        message.type === 'user' ? 'text-primary-100' : 'text-gray-500'
+                      }`}>
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    
+                    {/* Audio Controls for AI Messages */}
+                    {message.type === 'ai' && (
+                      <div className="flex flex-col space-y-2">
+                        {/* Speaker Icon */}
+                        <button
+                          onClick={() => playMessageAudio(message)}
+                          className={`self-start p-1 rounded-lg transition-all duration-200 cursor-pointer ${
+                            playingMessageId === message.id
+                              ? 'text-blue-500 bg-blue-50 hover:bg-blue-100'
+                              : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                          }`}
+                          title={playingMessageId === message.id ? 'Stop audio' : 'Play audio'}
+                        >
+                          <Volume2 size={24} />
+                        </button>
+                        
+                        {/* Compact Audio Player */}
+                        <audio
+                          controls
+                          className="w-48 h-8"
+                          style={{ fontSize: '12px' }}
+                          src={message.audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'}
+                          preload="none"
+                        >
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
