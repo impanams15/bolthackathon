@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { Heart, CheckCircle, AlertCircle, Home } from 'lucide-react'
+import { Heart, CheckCircle, AlertCircle, Home, Award, ExternalLink } from 'lucide-react'
 
 export default function DonatePage() {
   const { user } = useAuth()
@@ -9,6 +9,9 @@ export default function DonatePage() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [certificateLoading, setCertificateLoading] = useState(false)
+  const [certificateResult, setCertificateResult] = useState(null)
+  const [certificateError, setCertificateError] = useState('')
 
   const handleDonate = async (e) => {
     e.preventDefault()
@@ -56,10 +59,53 @@ export default function DonatePage() {
     }
   }
 
+  const handleMintCertificate = async () => {
+    if (!result || !result.amount) {
+      setCertificateError('No donation data available for certificate minting')
+      return
+    }
+
+    setCertificateLoading(true)
+    setCertificateError('')
+    setCertificateResult(null)
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mintCertificate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          donationAmount: result.amount
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Certificate minting failed')
+      }
+
+      setCertificateResult(data)
+    } catch (err) {
+      setCertificateError(err.message)
+    } finally {
+      setCertificateLoading(false)
+    }
+  }
+
   const handleBackToHome = () => {
     setShowSuccess(false)
     setResult(null)
     setError('')
+    setCertificateResult(null)
+    setCertificateError('')
+  }
+
+  const getAlgoExplorerUrl = (assetId) => {
+    return `https://testnet.algoexplorer.io/asset/${assetId}`
   }
 
   if (showSuccess && result) {
@@ -93,6 +139,83 @@ export default function DonatePage() {
           <div className="success-message-box">
             <p>{result.message}</p>
           </div>
+
+          {/* Certificate Section */}
+          {!certificateResult && (
+            <div className="certificate-section">
+              <div className="certificate-info">
+                <Award size={32} style={{ color: '#f39c12', marginBottom: '1rem' }} />
+                <h3>Get Your Donation Certificate</h3>
+                <p>Mint a unique blockchain certificate to commemorate your donation!</p>
+              </div>
+              
+              <button 
+                onClick={handleMintCertificate} 
+                disabled={certificateLoading}
+                className="mint-certificate-button"
+              >
+                {certificateLoading ? (
+                  <>
+                    <div className="loading-spinner-small"></div>
+                    Minting Certificate...
+                  </>
+                ) : (
+                  <>
+                    🪙 Mint Certificate
+                  </>
+                )}
+              </button>
+
+              {certificateError && (
+                <div className="error-message" style={{ marginTop: '1rem' }}>
+                  <AlertCircle size={20} />
+                  <span>{certificateError}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Certificate Success */}
+          {certificateResult && (
+            <div className="certificate-success">
+              <div className="certificate-success-header">
+                <Award size={48} style={{ color: '#f39c12' }} />
+                <h3>Certificate Minted! 🎉</h3>
+                <p>Your unique donation certificate has been created on the Algorand blockchain</p>
+              </div>
+
+              <div className="certificate-details">
+                <div className="detail-item">
+                  <strong>Certificate Name:</strong>
+                  <span>AuraGuard Certificate (AGC)</span>
+                </div>
+                <div className="detail-item">
+                  <strong>ASA ID:</strong>
+                  <span>{certificateResult.asaId}</span>
+                </div>
+                <div className="detail-item">
+                  <strong>Transaction Hash:</strong>
+                  <code className="tx-hash">{certificateResult.txHash}</code>
+                </div>
+              </div>
+
+              <div className="certificate-actions">
+                <a 
+                  href={getAlgoExplorerUrl(certificateResult.asaId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="view-certificate-button"
+                >
+                  <ExternalLink size={20} />
+                  View on AlgoExplorer
+                </a>
+              </div>
+
+              <div className="certificate-message">
+                <p>🏆 Your certificate is a unique ASA token that proves your donation on the blockchain. It's permanently recorded and can be viewed by anyone!</p>
+              </div>
+            </div>
+          )}
 
           <button onClick={handleBackToHome} className="back-home-button">
             <Home size={20} />
@@ -177,8 +300,8 @@ export default function DonatePage() {
             <p>Your donation goes directly to verified charity wallets to maximize impact.</p>
           </div>
           <div className="info-item">
-            <h4>Low Fees</h4>
-            <p>Algorand's low transaction fees mean more of your donation reaches those in need.</p>
+            <h4>Get a Certificate</h4>
+            <p>Receive a unique blockchain certificate (ASA token) to commemorate your donation.</p>
           </div>
         </div>
       </div>
