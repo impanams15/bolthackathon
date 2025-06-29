@@ -24,7 +24,6 @@ export default function Chat() {
   const messagesEndRef = useRef(null)
   const audioRef = useRef(null)
   const recognitionRef = useRef(null)
-  const tavusVideoRef = useRef(null)
 
   useEffect(() => {
     scrollToBottom()
@@ -124,36 +123,12 @@ export default function Chat() {
     }
   }
 
-  const playAudioWithAvatar = async (audioUrl, text, messageId) => {
+  const playAudio = async (audioUrl, messageId) => {
     if (!audioUrl || isMuted) return
 
     try {
       setIsPlaying(true)
       setPlayingMessageId(messageId)
-
-      // Generate Tavus video with lip-sync
-      if (showAvatar) {
-        const videoResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-avatar-video`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: text,
-            audioUrl: audioUrl,
-            userId: user.id
-          })
-        })
-
-        if (videoResponse.ok) {
-          const { videoUrl } = await videoResponse.json()
-          if (tavusVideoRef.current && videoUrl) {
-            tavusVideoRef.current.src = videoUrl
-            tavusVideoRef.current.play()
-          }
-        }
-      }
 
       // Play audio
       if (audioRef.current) {
@@ -169,7 +144,7 @@ export default function Chat() {
         }
       }
     } catch (error) {
-      console.error('Audio/Video playback error:', error)
+      console.error('Audio playback error:', error)
       setIsPlaying(false)
       setPlayingMessageId(null)
     }
@@ -186,7 +161,7 @@ export default function Chat() {
     } else {
       // Start playback
       if (message.audioUrl) {
-        playAudioWithAvatar(message.audioUrl, message.content, message.id)
+        playAudio(message.audioUrl, message.id)
       } else {
         // Generate audio for this message
         generateSpeech(message.content).then(audioUrl => {
@@ -195,7 +170,7 @@ export default function Chat() {
             setMessages(prev => prev.map(msg => 
               msg.id === message.id ? { ...msg, audioUrl } : msg
             ))
-            playAudioWithAvatar(audioUrl, message.content, message.id)
+            playAudio(audioUrl, message.id)
           }
         })
       }
@@ -239,7 +214,7 @@ export default function Chat() {
       // Auto-play the response if not muted
       if (audioUrl && !isMuted) {
         setTimeout(() => {
-          playAudioWithAvatar(audioUrl, aiResponse, newAIMessage.id)
+          playAudio(audioUrl, newAIMessage.id)
         }, 500)
       }
     } catch (error) {
@@ -351,15 +326,14 @@ export default function Chat() {
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 mb-6 p-6">
             <div className="text-center">
               <div className="relative inline-block">
-                {/* Tavus Video Iframe */}
+                {/* Working Tavus Video Iframe */}
                 <div className="relative">
                   <iframe
-                    src="https://platform.tavus.io/videos/afb1656d6c"
-                    width="350"
+                    src="https://tavus.video/afb1656d6c"
+                    width="320"
                     height="320"
                     allow="autoplay; microphone"
-                    className="rounded-2xl shadow-lg border-4 border-white overflow-hidden"
-                    style={{ border: 'none' }}
+                    className="rounded-xl shadow-xl border-0 overflow-hidden"
                     title="Tavus AI Avatar"
                   />
                   
