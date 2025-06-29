@@ -1,8 +1,9 @@
 {
-  "name": "algorand-dapp-with-ai",
+  "name": "usheguard-charity-advisor",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "AI-Powered Charity Advisor on Algorand Blockchain",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

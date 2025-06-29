@@ -38,8 +38,8 @@ serve(async (req) => {
     // Generate AI response based on context
     let aiResponse = ''
     
-    if (context === 'algorand_dapp') {
-      aiResponse = generateAlgorandResponse(message)
+    if (context === 'charity_advisor') {
+      aiResponse = generateCharityAdvisorResponse(message)
     } else {
       aiResponse = generateGeneralResponse(message)
     }
@@ -72,47 +72,59 @@ serve(async (req) => {
   }
 })
 
-function generateAlgorandResponse(message: string): string {
+function generateCharityAdvisorResponse(message: string): string {
   const lowerMessage = message.toLowerCase()
   
-  if (lowerMessage.includes('wallet') || lowerMessage.includes('create')) {
-    return "I can help you with Algorand wallet operations! You can create a new wallet or import an existing one using your 25-word mnemonic phrase. Your wallet will be securely stored and encrypted in our database."
+  if (lowerMessage.includes('charity') || lowerMessage.includes('donate') || lowerMessage.includes('donation')) {
+    return "I can help you find trustworthy charities! When choosing a charity, look for organizations with high transparency ratings, clear impact metrics, and efficient fund allocation. Popular platforms like Charity Navigator, GuideStar, and GiveWell provide excellent charity evaluations. Would you like me to help you find charities for a specific cause?"
   }
   
-  if (lowerMessage.includes('send') || lowerMessage.includes('transfer') || lowerMessage.includes('algo')) {
-    return "To send ALGO tokens, go to the 'Send ALGO' tab. You'll need the recipient's Algorand address and the amount you want to send. The minimum transaction is 0.001 ALGO, and there's a small network fee for each transaction."
+  if (lowerMessage.includes('blockchain') || lowerMessage.includes('crypto') || lowerMessage.includes('algorand')) {
+    return "Blockchain donations offer unique advantages: complete transparency, lower fees, faster transfers, and immutable records. With Algorand, your donations are processed in 4.5 seconds with minimal environmental impact. You can track exactly where your funds go and receive blockchain-verified certificates of your charitable giving."
   }
   
-  if (lowerMessage.includes('mint') || lowerMessage.includes('asa') || lowerMessage.includes('token')) {
-    return "You can mint your own ASA (Algorand Standard Asset) tokens! Go to the 'Mint ASA' tab to create custom tokens. You can set the name, symbol, total supply, decimals, and even add a URL for token metadata."
+  if (lowerMessage.includes('impact') || lowerMessage.includes('effective')) {
+    return "Effective giving focuses on maximizing positive impact per dollar donated. Consider charities that: 1) Address urgent, neglected problems, 2) Have strong evidence of effectiveness, 3) Can scale their impact with additional funding. Organizations like GiveWell research the most cost-effective charities globally."
   }
   
-  if (lowerMessage.includes('balance') || lowerMessage.includes('account')) {
-    return "Your account balance and assets are displayed in the wallet section. The balance updates automatically every 10 seconds. You can see both your ALGO balance and any ASA tokens you hold."
+  if (lowerMessage.includes('tax') || lowerMessage.includes('deduction')) {
+    return "Charitable donations can provide tax benefits! In the US, donations to qualified 501(c)(3) organizations are tax-deductible. Keep records of all donations, including blockchain transaction IDs. Our platform automatically generates donation receipts and certificates that you can use for tax purposes."
   }
   
-  if (lowerMessage.includes('testnet') || lowerMessage.includes('network')) {
-    return "This application is configured to use Algorand TestNet by default, which means you can safely test all features without using real ALGO. You can get free TestNet ALGO from the Algorand faucet."
+  if (lowerMessage.includes('scam') || lowerMessage.includes('fraud') || lowerMessage.includes('trust')) {
+    return "Great question about charity safety! Red flags include: high-pressure tactics, vague descriptions of work, excessive administrative costs, lack of financial transparency, and no verifiable impact data. Always verify charity registration, check ratings on Charity Navigator, and look for clear mission statements and annual reports."
   }
   
-  if (lowerMessage.includes('donation') || lowerMessage.includes('donate')) {
-    return "The donation feature allows you to send ALGO to support causes or individuals. You can add personal messages and choose to make donations anonymous. You can also create fundraising campaigns for specific goals."
+  if (lowerMessage.includes('certificate') || lowerMessage.includes('proof')) {
+    return "Yes! Our platform issues blockchain-verified certificates for all donations. These certificates are permanently recorded on the Algorand blockchain and serve as immutable proof of your charitable giving. You can download, share, and use these certificates for tax purposes or to showcase your philanthropic impact."
   }
   
-  if (lowerMessage.includes('reddit')) {
-    return "The Reddit integration lets you browse cryptocurrency-related subreddits and create posts directly from the app. You can view trending posts from r/algorand, r/cryptocurrency, and other blockchain communities."
+  if (lowerMessage.includes('wallet') || lowerMessage.includes('setup')) {
+    return "To start donating, you'll need an Algorand wallet. Go to your Profile page to create a new wallet or import an existing one. Your wallet is securely encrypted and stored. Once set up, you can make instant, transparent donations to any Algorand address with full transaction tracking."
   }
   
-  return "I'm your Algorand blockchain assistant! I can help you with wallet management, ALGO transfers, ASA token minting, donations, and Reddit integration. What would you like to know more about?"
+  if (lowerMessage.includes('environment') || lowerMessage.includes('climate') || lowerMessage.includes('green')) {
+    return "Environmental charities are crucial for our planet's future! Top-rated environmental organizations include The Nature Conservancy, Environmental Defense Fund, and Cool Earth. Algorand itself is carbon-negative, so your blockchain donations actually help the environment. Would you like specific recommendations for climate-focused charities?"
+  }
+  
+  if (lowerMessage.includes('education') || lowerMessage.includes('school') || lowerMessage.includes('children')) {
+    return "Education charities create lasting impact! Highly effective organizations include Room to Read, Teach for America, and DonorsChoose. When evaluating education charities, look for measurable outcomes like graduation rates, test score improvements, and long-term student success tracking."
+  }
+  
+  if (lowerMessage.includes('health') || lowerMessage.includes('medical') || lowerMessage.includes('disease')) {
+    return "Health charities save and improve lives globally! Top organizations include Against Malaria Foundation, GiveDirectly, and Doctors Without Borders. These charities have proven track records of cost-effective interventions. Many focus on preventable diseases where small donations can have enormous impact."
+  }
+  
+  return "I'm your AI charity advisor, here to help you make informed, impactful donations! I can assist with finding trustworthy charities, understanding their effectiveness, setting up blockchain donations, and maximizing your philanthropic impact. What specific area of charitable giving interests you most?"
 }
 
 function generateGeneralResponse(message: string): string {
   const responses = [
-    "That's an interesting question! How can I help you with your Algorand DApp needs?",
-    "I'm here to assist you with blockchain operations and general questions. What would you like to explore?",
-    "Thanks for your message! I specialize in Algorand blockchain operations, but I'm happy to help with other topics too.",
-    "I understand you're looking for information. Let me know if you need help with wallet operations, token transfers, or ASA minting!",
-    "Great question! I'm designed to help with Algorand blockchain features, but I can assist with general inquiries as well."
+    "That's an interesting question! As your charity advisor, I'm here to help you make meaningful donations and find trustworthy organizations. How can I assist with your philanthropic goals?",
+    "I specialize in charitable giving and blockchain donations. Whether you're looking for effective charities, want to understand impact metrics, or need help with secure donations, I'm here to help!",
+    "Great question! I can help you navigate the world of charitable giving, from finding the right organizations to making secure blockchain donations. What would you like to explore?",
+    "I'm designed to help you become a more effective philanthropist. I can recommend charities, explain impact measurement, and guide you through blockchain donations. How can I assist you today?",
+    "Thanks for reaching out! I'm your AI charity advisor, focused on helping you make informed, impactful donations. What aspect of charitable giving would you like to discuss?"
   ]
   
   return responses[Math.floor(Math.random() * responses.length)]

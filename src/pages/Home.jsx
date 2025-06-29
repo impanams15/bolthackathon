@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MessageCircle, Heart, Shield, Sparkles, ArrowRight } from 'lucide-react'
+import { MessageCircle, Heart, Shield, Sparkles, ArrowRight, Users, Award, Globe } from 'lucide-react'
 
 export default function Home() {
   return (
@@ -47,7 +47,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
               
               <MessageCircle className="mr-4 group-hover:rotate-12 transition-transform duration-300" size={28} />
-              <span className="relative z-10">Get Started</span>
+              <span className="relative z-10">Start Your Giving Journey</span>
               <ArrowRight className="ml-4 group-hover:translate-x-2 transition-transform duration-300" size={28} />
               
               {/* Shine effect */}
@@ -64,7 +64,7 @@ export default function Home() {
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-4">AI-Powered Guidance</h3>
             <p className="text-gray-600 leading-relaxed">
-              Our intelligent AI analyzes charity effectiveness, transparency, and impact to help you make informed giving decisions.
+              Our intelligent AI analyzes charity effectiveness, transparency, and impact to help you make informed giving decisions with confidence.
             </p>
           </div>
 
@@ -72,7 +72,7 @@ export default function Home() {
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Shield className="text-white" size={32} />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Secure Donations</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Secure Blockchain Donations</h3>
             <p className="text-gray-600 leading-relaxed">
               Make transparent, traceable donations using Algorand's eco-friendly blockchain technology with complete security and trust.
             </p>
@@ -80,42 +80,69 @@ export default function Home() {
 
           <div className="group bg-white/70 backdrop-blur-md rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/30 hover:border-purple-200 transform hover:-translate-y-2">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Heart className="text-white" size={32} />
+              <Award className="text-white" size={32} />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Verified Impact</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Verified Impact Certificates</h3>
             <p className="text-gray-600 leading-relaxed">
               Earn blockchain-verified certificates for your charitable contributions and track the real-world impact of your generosity.
             </p>
           </div>
         </div>
 
+        {/* Additional Features */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16 animate-fade-in-up-delay">
+          <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/30">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mr-4">
+                <Users className="text-white" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Community Driven</h3>
+            </div>
+            <p className="text-gray-600 leading-relaxed">
+              Join a community of conscious givers. Share experiences, discover new causes, and amplify your impact through collective action.
+            </p>
+          </div>
+
+          <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/30">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mr-4">
+                <Globe className="text-white" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Global Impact</h3>
+            </div>
+            <p className="text-gray-600 leading-relaxed">
+              Support causes worldwide with instant, borderless donations. From local communities to global initiatives, make a difference anywhere.
+            </p>
+          </div>
+        </div>
+
         {/* Trust Indicators */}
         <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/30 animate-fade-in-up-delay">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8">Trusted by Changemakers</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-8">Trusted by Changemakers Worldwide</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center group">
               <div className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
-                Fast
+                4.5s
               </div>
-              <div className="text-sm text-gray-600">4.5s Finality</div>
+              <div className="text-sm text-gray-600">Transaction Speed</div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
-                Green
+                Carbon-
               </div>
-              <div className="text-sm text-gray-600">Carbon Negative</div>
+              <div className="text-sm text-gray-600">Negative Network</div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
-                Secure
+                100%
               </div>
-              <div className="text-sm text-gray-600">Blockchain Verified</div>
+              <div className="text-sm text-gray-600">Transparent</div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
-                Smart
+                AI
               </div>
-              <div className="text-sm text-gray-600">AI Powered</div>
+              <div className="text-sm text-gray-600">Powered Insights</div>
             </div>
           </div>
         </div>

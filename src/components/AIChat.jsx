@@ -8,7 +8,7 @@ export default function AIChat() {
     {
       id: 1,
       type: 'ai',
-      content: 'Hello! I\'m your AI assistant for Algorand blockchain operations. How can I help you today?',
+      content: 'Hello! I\'m your AI charity advisor. I can help you find trustworthy charities, understand their impact, and guide you through secure blockchain donations. How can I assist you today?',
       timestamp: new Date()
     }
   ])
@@ -21,7 +21,6 @@ export default function AIChat() {
   const messagesEndRef = useRef(null)
   const audioRef = useRef(null)
   const recognitionRef = useRef(null)
-  const tavusVideoRef = useRef(null)
 
   useEffect(() => {
     scrollToBottom()
@@ -79,7 +78,7 @@ export default function AIChat() {
         body: JSON.stringify({
           message: userMessage,
           userId: user.id,
-          context: 'algorand_dapp'
+          context: 'charity_advisor'
         })
       })
 
@@ -105,7 +104,7 @@ export default function AIChat() {
         },
         body: JSON.stringify({
           text: text,
-          voice: 'Rachel', // ElevenLabs voice
+          voice: 'Rachel',
           userId: user.id
         })
       })
@@ -140,15 +139,7 @@ export default function AIChat() {
         })
       })
 
-      if (videoResponse.ok) {
-        const { videoUrl } = await videoResponse.json()
-        if (tavusVideoRef.current && videoUrl) {
-          tavusVideoRef.current.src = videoUrl
-          tavusVideoRef.current.play()
-        }
-      }
-
-      // Play audio
+      // Play audio regardless of video generation
       if (audioRef.current) {
         audioRef.current.src = audioUrl
         audioRef.current.play()
@@ -217,7 +208,7 @@ export default function AIChat() {
   return (
     <div className="ai-chat-container">
       <div className="chat-header">
-        <h3>AI Assistant</h3>
+        <h3>AI Charity Advisor</h3>
         <div className="chat-controls">
           <button
             onClick={toggleMute}
@@ -239,15 +230,9 @@ export default function AIChat() {
       </div>
 
       <div className="avatar-container">
-        <video
-          ref={tavusVideoRef}
-          className="tavus-avatar"
-          width="200"
-          height="200"
-          muted
-          playsInline
-          poster="/avatar-placeholder.jpg"
-        />
+        <div className="w-32 h-32 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+          <span className="text-white text-4xl">🤖</span>
+        </div>
         {isPlaying && <div className="speaking-indicator">Speaking...</div>}
       </div>
 
@@ -282,7 +267,7 @@ export default function AIChat() {
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder={isListening ? 'Listening...' : 'Ask about Algorand, blockchain, or anything else...'}
+            placeholder={isListening ? 'Listening...' : 'Ask about charities, donations, or blockchain giving...'}
             disabled={isLoading || isListening}
             className={isListening ? 'listening' : ''}
           />
