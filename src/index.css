@@ -61,3 +61,70 @@ input {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Ensure smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Navigation specific styles */
+.nav-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Mobile menu animation */
+@media (max-width: 768px) {
+  .mobile-menu-enter {
+    opacity: 0;
+    max-height: 0;
+  }
+  
+  .mobile-menu-enter-active {
+    opacity: 1;
+    max-height: 400px;
+    transition: opacity 300ms ease-in-out, max-height 300ms ease-in-out;
+  }
+  
+  .mobile-menu-exit {
+    opacity: 1;
+    max-height: 400px;
+  }
+  
+  .mobile-menu-exit-active {
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 300ms ease-in-out, max-height 300ms ease-in-out;
+  }
+}
+
+/* Active page indicator */
+.nav-active-indicator {
+  position: relative;
+}
+
+.nav-active-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: #2563eb;
+  border-radius: 50%;
+}
+
+/* Backdrop blur support */
+@supports (backdrop-filter: blur(12px)) {
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+  }
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .backdrop-blur-md {
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+}
